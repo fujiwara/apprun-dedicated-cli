@@ -6,18 +6,22 @@ import (
 	"os"
 	"os/signal"
 
-	app "github.com/fujiwara/apprun-dedicated-cli"
+	cli "github.com/fujiwara/apprun-dedicated-cli"
 )
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), signals()...)
 	defer stop()
 	if err := run(ctx); err != nil {
-		slog.Error(err.Error())
+		slog.Error("error", "err", err)
 		os.Exit(1)
 	}
 }
 
 func run(ctx context.Context) error {
-	return app.Run(ctx)
+	c, err := cli.New(ctx)
+	if err != nil {
+		return err
+	}
+	return c.Run(ctx)
 }

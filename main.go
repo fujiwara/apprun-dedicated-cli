@@ -1,11 +1,16 @@
-package apprun-dedicated-cli
+package cli
 
 import (
 	"context"
-	"fmt"
+
+	armed "github.com/fujiwara/jsonnet-armed"
+	"github.com/sacloud/saclient-go"
 )
 
-func Run(ctx context.Context) error {
-	fmt.Println("apprun-dedicated-cli!")
-	return nil
+func New(ctx context.Context) (*CLI, error) {
+	c := &CLI{
+		sc:     &saclient.Client{},
+		loader: &armed.CLI{},
+	}
+	return c, nil
 }
