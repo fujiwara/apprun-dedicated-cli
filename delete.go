@@ -22,13 +22,9 @@ func (c *CLI) runDelete(ctx context.Context) error {
 
 	appID := uuid.UUID(appDetail.ApplicationID).String()
 	if !c.Delete.Force {
-		fmt.Fprintf(os.Stderr,
-			"Are you sure you want to delete application %q (id: %s) in cluster %q? [y/N]: ",
-			c.app.Name, appID, c.app.Cluster,
-		)
-		var answer string
-		fmt.Fscanln(os.Stdin, &answer)
-		if answer != "y" && answer != "Y" {
+		msg := fmt.Sprintf("Are you sure you want to delete application %q (id: %s) in cluster %q?",
+			c.app.Name, appID, c.app.Cluster)
+		if !confirm(msg) {
 			fmt.Fprintln(os.Stderr, "Aborted.")
 			return nil
 		}

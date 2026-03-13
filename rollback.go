@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 
 	apprun "github.com/sacloud/apprun-dedicated-api-go"
 	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
@@ -35,6 +36,14 @@ func (c *CLI) runRollback(ctx context.Context) error {
 
 	if targetVer == activeVer {
 		return fmt.Errorf("version %d is already active", targetVer)
+	}
+
+	if !c.Rollback.Force {
+		msg := fmt.Sprintf("Rollback application %q from version %d to %d?", c.app.Name, activeVer, targetVer)
+		if !confirm(msg) {
+			fmt.Fprintln(os.Stderr, "Aborted.")
+			return nil
+		}
 	}
 
 	slog.Info("rolling back", "from", activeVer, "to", targetVer)

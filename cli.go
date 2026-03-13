@@ -133,4 +133,12 @@ type StatusOption struct{}
 type VersionsOption struct{}
 type RollbackOption struct {
 	Target *int32 `name:"target" help:"Version number to rollback to (default: previous existing version)"`
+	Force  bool   `help:"Skip confirmation prompt" default:"false"`
+}
+
+func confirm(msg string) bool {
+	fmt.Fprintf(os.Stderr, "%s [y/N]: ", msg)
+	var answer string
+	fmt.Fscanln(os.Stdin, &answer)
+	return answer == "y" || answer == "Y"
 }
