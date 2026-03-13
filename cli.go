@@ -126,5 +126,5 @@ type RenderOption struct{}
 type StatusOption struct{}
 type VersionsOption struct{}
 type RollbackOption struct {
-	Version *int32 `help:"Version number to rollback to (default: previous existing version)"`
+	Target *int32 `name:"target" help:"Version number to rollback to (default: previous existing version)"`
 }

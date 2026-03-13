@@ -22,8 +22,8 @@ func (c *CLI) runRollback(ctx context.Context) error {
 	activeVer := int32(*appDetail.ActiveVersion)
 
 	var targetVer int32
-	if c.Rollback.Version != nil {
-		targetVer = *c.Rollback.Version
+	if c.Rollback.Target != nil {
+		targetVer = *c.Rollback.Target
 	} else {
 		// Find the previous existing version before the active one
 		prev, err := findPreviousVersion(ctx, c.client, appDetail.ApplicationID, activeVer)

@@ -198,12 +198,12 @@ Rollback to a previous version. By default, activates the latest existing versio
 $ apprun-dedicated-cli rollback --app application.jsonnet
 
 # Rollback to a specific version
-$ apprun-dedicated-cli rollback --version 3 --app application.jsonnet
+$ apprun-dedicated-cli rollback --target 3 --app application.jsonnet
 ```
 
 | Flag | Description |
 |------|-------------|
-| `--version` | Version number to rollback to (default: previous existing version) |
+| `--target` | Version number to rollback to (default: previous existing version) |
 
 ## License
 
