@@ -11,26 +11,21 @@ import (
 )
 
 func (c *CLI) runDeploy(ctx context.Context) error {
-	// Load and validate application definition
-	def, err := c.loadApplicationDefinition(ctx)
-	if err != nil {
-		return err
-	}
-	if err := def.Validate(); err != nil {
+	if err := c.app.Validate(); err != nil {
 		return fmt.Errorf("invalid application definition: %w", err)
 	}
 
 	appOp := apprun.NewApplicationOp(c.client)
 
 	// Find or create application
-	appDetail, err := findApplicationByName(ctx, appOp, c.config.Cluster, c.config.Application)
+	appDetail, err := findApplicationByName(ctx, appOp, c.app.Cluster, c.app.Name)
 	if err != nil {
-		slog.Info("application not found, creating", "name", c.config.Application, "cluster", c.config.Cluster)
-		clusterID, err := findClusterIDByName(ctx, c.client, c.config.Cluster)
+		slog.Info("application not found, creating", "name", c.app.Name, "cluster", c.app.Cluster)
+		clusterID, err := findClusterIDByName(ctx, c.client, c.app.Cluster)
 		if err != nil {
 			return err
 		}
-		created, err := appOp.Create(ctx, c.config.Application, clusterID)
+		created, err := appOp.Create(ctx, c.app.Name, clusterID)
 		if err != nil {
 			return fmt.Errorf("failed to create application: %w", err)
 		}
@@ -38,13 +33,13 @@ func (c *CLI) runDeploy(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("failed to read created application: %w", err)
 		}
-		slog.Info("created application", "name", c.config.Application, "id", uuid.UUID(appDetail.ApplicationID).String())
+		slog.Info("created application", "name", c.app.Name, "id", uuid.UUID(appDetail.ApplicationID).String())
 	} else {
-		slog.Info("deploying application", "name", c.config.Application, "id", uuid.UUID(appDetail.ApplicationID).String())
+		slog.Info("deploying application", "name", c.app.Name, "id", uuid.UUID(appDetail.ApplicationID).String())
 	}
 
 	// Create new version
-	params := definitionToCreateParams(def)
+	params := definitionToCreateParams(c.app)
 	// For existing apps with versions, keep registry password; for first version, remove
 	if params.RegistryPasswordAction == "" {
 		if appDetail.ActiveVersion != nil {
@@ -58,7 +53,7 @@ func (c *CLI) runDeploy(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("failed to create version: %w", err)
 	}
-	slog.Info("created version", "version", ver.GetVersion(), "image", def.Image.Path+":"+def.Image.Tag)
+	slog.Info("created version", "version", ver.GetVersion(), "image", c.app.Image)
 
 	// Activate the new version
 	newVer := int32(ver.GetVersion())

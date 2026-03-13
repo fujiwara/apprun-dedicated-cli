@@ -15,10 +15,7 @@ import (
 	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
 )
 
-const (
-	defaultConfigFilename        = "config.jsonnet"
-	defaultAppDefinitionFilename = "application.jsonnet"
-)
+const defaultAppDefinitionFilename = "application.jsonnet"
 
 func (c *CLI) runInit(ctx context.Context) error {
 	clusterName := c.Init.Cluster
@@ -29,7 +26,6 @@ func (c *CLI) runInit(ctx context.Context) error {
 		return fmt.Errorf("failed to create output directory %s: %w", outputDir, err)
 	}
 
-	configFile := filepath.Join(outputDir, defaultConfigFilename)
 	appDefFile := filepath.Join(outputDir, defaultAppDefinitionFilename)
 
 	// Find application by name in cluster
@@ -41,7 +37,10 @@ func (c *CLI) runInit(ctx context.Context) error {
 	slog.Info("found application", "name", appName, "id", uuid.UUID(appDetail.ApplicationID).String())
 
 	// Get active version details
-	appDef := &ApplicationDefinition{}
+	appDef := &ApplicationDefinition{
+		Cluster: clusterName,
+		Name:    appName,
+	}
 	if appDetail.ActiveVersion != nil {
 		verOp := apprun.NewVersionOp(c.client, appDetail.ApplicationID)
 		verDetail, err := verOp.Read(ctx, v1.ApplicationVersionNumber(*appDetail.ActiveVersion))
@@ -49,6 +48,8 @@ func (c *CLI) runInit(ctx context.Context) error {
 			return fmt.Errorf("failed to read active version: %w", err)
 		}
 		appDef = versionDetailToDefinition(verDetail)
+		appDef.Cluster = clusterName
+		appDef.Name = appName
 	} else {
 		// No active version, try to get latest version
 		verOp := apprun.NewVersionOp(c.client, appDetail.ApplicationID)
@@ -57,6 +58,8 @@ func (c *CLI) runInit(ctx context.Context) error {
 			verDetail, err := verOp.Read(ctx, vers[0].GetVersion())
 			if err == nil {
 				appDef = versionDetailToDefinition(verDetail)
+				appDef.Cluster = clusterName
+				appDef.Name = appName
 			}
 		}
 	}
@@ -66,17 +69,6 @@ func (c *CLI) runInit(ctx context.Context) error {
 		return err
 	}
 	slog.Info("wrote application definition", "file", appDefFile)
-
-	// Write config file
-	config := &Config{
-		Cluster:               clusterName,
-		Application:           appName,
-		ApplicationDefinition: defaultAppDefinitionFilename,
-	}
-	if err := writeJsonnet(configFile, config); err != nil {
-		return err
-	}
-	slog.Info("wrote config", "file", configFile)
 
 	return nil
 }

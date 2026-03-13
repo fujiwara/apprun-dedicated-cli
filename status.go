@@ -13,13 +13,13 @@ import (
 
 func (c *CLI) runStatus(ctx context.Context) error {
 	appOp := apprun.NewApplicationOp(c.client)
-	appDetail, err := findApplicationByName(ctx, appOp, c.config.Cluster, c.config.Application)
+	appDetail, err := findApplicationByName(ctx, appOp, c.app.Cluster, c.app.Name)
 	if err != nil {
 		return err
 	}
 
 	status := map[string]any{
-		"cluster": c.config.Cluster,
+		"cluster": c.app.Cluster,
 		"application": map[string]any{
 			"id":             uuid.UUID(appDetail.ApplicationID).String(),
 			"name":           appDetail.Name,
@@ -52,11 +52,7 @@ func (c *CLI) runStatus(ctx context.Context) error {
 }
 
 func (c *CLI) runRender(ctx context.Context) error {
-	def, err := c.loadApplicationDefinition(ctx)
-	if err != nil {
-		return err
-	}
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	return enc.Encode(def)
+	return enc.Encode(c.app)
 }

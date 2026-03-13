@@ -1,14 +1,14 @@
 {
+  cluster: "default",
+  name: "printenv",
   cpu: 1,
   memory: 1,
-  image: {
-    path: "ghcr.io/fujiwara/printenv",
-    tag: "v0.2.5",
-  },
-  exposed_ports: [
+  image: "ghcr.io/fujiwara/printenv:v0.2.5",
+  exposedPorts: [
     {
-      target_port: 8080,
-      load_balancer_port: 80,
+      targetPort: 8080,
+      loadBalancerPort: 80,
+      host: ["app.example.com"],
     },
   ],
 }

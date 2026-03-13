@@ -5,39 +5,19 @@ import (
 	"github.com/sacloud/apprun-dedicated-api-go/apis/version"
 )
 
-// versionDetailToDefinition converts SDK VersionDetail to our ApplicationDefinition
+// versionDetailToDefinition converts SDK VersionDetail to ApplicationDefinition.
 func versionDetailToDefinition(v *version.VersionDetail) *ApplicationDefinition {
 	def := &ApplicationDefinition{
-		CPU:         int(v.CPU),
-		Memory:      int(v.Memory),
-		ScalingMode: string(v.ScalingMode),
-		Image:       imageFromString(v.Image),
-		Cmd:         v.Cmd,
-	}
-
-	if v.RegistryUsername != nil {
-		def.Image.RegistryUsername = *v.RegistryUsername
-	}
-
-	if v.FixedScale != nil {
-		val := int(*v.FixedScale)
-		def.FixedScale = &val
-	}
-	if v.MinScale != nil {
-		val := int(*v.MinScale)
-		def.MinScale = &val
-	}
-	if v.MaxScale != nil {
-		val := int(*v.MaxScale)
-		def.MaxScale = &val
-	}
-	if v.ScaleInThreshold != nil {
-		val := int(*v.ScaleInThreshold)
-		def.ScaleInThreshold = &val
-	}
-	if v.ScaleOutThreshold != nil {
-		val := int(*v.ScaleOutThreshold)
-		def.ScaleOutThreshold = &val
+		CPU:               v.CPU,
+		Memory:            v.Memory,
+		ScalingMode:       string(v.ScalingMode),
+		FixedScale:        v.FixedScale,
+		MinScale:          v.MinScale,
+		MaxScale:          v.MaxScale,
+		ScaleInThreshold:  v.ScaleInThreshold,
+		ScaleOutThreshold: v.ScaleOutThreshold,
+		Image:             v.Image,
+		Cmd:               v.Cmd,
 	}
 
 	for _, ep := range v.ExposedPorts {
@@ -47,70 +27,46 @@ func versionDetailToDefinition(v *version.VersionDetail) *ApplicationDefinition 
 			Host:           ep.Host,
 		}
 		if ep.LoadBalancerPort != nil {
-			port.LoadBalancerPort = int(*ep.LoadBalancerPort)
+			lbp := int(*ep.LoadBalancerPort)
+			port.LoadBalancerPort = &lbp
 		}
 		if ep.HealthCheck != nil {
 			port.HealthCheck = &HealthCheck{
 				Path:            ep.HealthCheck.GetPath(),
-				IntervalSeconds: int(ep.HealthCheck.GetIntervalSeconds()),
-				TimeoutSeconds:  int(ep.HealthCheck.GetTimeoutSeconds()),
+				IntervalSeconds: ep.HealthCheck.GetIntervalSeconds(),
+				TimeoutSeconds:  ep.HealthCheck.GetTimeoutSeconds(),
 			}
 		}
 		def.ExposedPorts = append(def.ExposedPorts, port)
 	}
 
 	for _, ev := range v.EnvVars {
-		envVar := EnvironmentVariable{
+		envVar := EnvVar{
 			Key:    ev.Key,
 			Secret: ev.Secret,
 		}
 		if ev.Value != nil {
 			envVar.Value = *ev.Value
 		}
-		def.EnvironmentVariables = append(def.EnvironmentVariables, envVar)
+		def.Env = append(def.Env, envVar)
 	}
 
 	return def
 }
 
-// definitionToCreateParams converts our ApplicationDefinition to SDK CreateParams
+// definitionToCreateParams converts ApplicationDefinition to SDK CreateParams.
 func definitionToCreateParams(def *ApplicationDefinition) version.CreateParams {
 	params := version.CreateParams{
-		CPU:         int64(def.CPU),
-		Memory:      int64(def.Memory),
-		ScalingMode: v1.ScalingMode(def.ScalingMode),
-		Image:       def.Image.Path + ":" + def.Image.Tag,
-		Cmd:         def.Cmd,
-	}
-
-	if def.Image.RegistryUsername != "" {
-		params.RegistryUsername = &def.Image.RegistryUsername
-	}
-	if def.Image.RegistryPassword != "" {
-		params.RegistryPassword = &def.Image.RegistryPassword
-		params.RegistryPasswordAction = v1.RegistryPasswordActionNew
-	}
-	// RegistryPasswordAction is set by caller (Keep for updates, omit for first version)
-
-	if def.FixedScale != nil {
-		val := int32(*def.FixedScale)
-		params.FixedScale = &val
-	}
-	if def.MinScale != nil {
-		val := int32(*def.MinScale)
-		params.MinScale = &val
-	}
-	if def.MaxScale != nil {
-		val := int32(*def.MaxScale)
-		params.MaxScale = &val
-	}
-	if def.ScaleInThreshold != nil {
-		val := int32(*def.ScaleInThreshold)
-		params.ScaleInThreshold = &val
-	}
-	if def.ScaleOutThreshold != nil {
-		val := int32(*def.ScaleOutThreshold)
-		params.ScaleOutThreshold = &val
+		CPU:               def.CPU,
+		Memory:            def.Memory,
+		ScalingMode:       v1.ScalingMode(def.ScalingMode),
+		Image:             def.Image,
+		Cmd:               def.Cmd,
+		FixedScale:        def.FixedScale,
+		MinScale:          def.MinScale,
+		MaxScale:          def.MaxScale,
+		ScaleInThreshold:  def.ScaleInThreshold,
+		ScaleOutThreshold: def.ScaleOutThreshold,
 	}
 
 	for _, ep := range def.ExposedPorts {
@@ -119,21 +75,21 @@ func definitionToCreateParams(def *ApplicationDefinition) version.CreateParams {
 			UseLetsEncrypt: ep.UseLetsEncrypt,
 			Host:           ep.Host,
 		}
-		if ep.LoadBalancerPort != 0 {
-			lbPort := v1.Port(ep.LoadBalancerPort)
+		if ep.LoadBalancerPort != nil {
+			lbPort := v1.Port(*ep.LoadBalancerPort)
 			port.LoadBalancerPort = &lbPort
 		}
 		if ep.HealthCheck != nil {
 			hc := v1.HealthCheck{}
 			hc.SetPath(ep.HealthCheck.Path)
-			hc.SetIntervalSeconds(int32(ep.HealthCheck.IntervalSeconds))
-			hc.SetTimeoutSeconds(int32(ep.HealthCheck.TimeoutSeconds))
+			hc.SetIntervalSeconds(ep.HealthCheck.IntervalSeconds)
+			hc.SetTimeoutSeconds(ep.HealthCheck.TimeoutSeconds)
 			port.HealthCheck = &hc
 		}
 		params.ExposedPorts = append(params.ExposedPorts, port)
 	}
 
-	for _, ev := range def.EnvironmentVariables {
+	for _, ev := range def.Env {
 		envVar := version.EnvironmentVariable{
 			Key:    ev.Key,
 			Secret: ev.Secret,
@@ -145,20 +101,4 @@ func definitionToCreateParams(def *ApplicationDefinition) version.CreateParams {
 	}
 
 	return params
-}
-
-// imageFromString parses "path:tag" into ImageDefinition
-func imageFromString(image string) ImageDefinition {
-	for i := len(image) - 1; i >= 0; i-- {
-		if image[i] == ':' {
-			return ImageDefinition{
-				Path: image[:i],
-				Tag:  image[i+1:],
-			}
-		}
-		if image[i] == '/' {
-			break
-		}
-	}
-	return ImageDefinition{Path: image, Tag: "latest"}
 }

@@ -15,16 +15,16 @@ import (
 
 type CLI struct {
 	// Commands
-	Init     InitOption     `cmd:"" help:"Initialize definition files from existing resources"`
+	Init     InitOption     `cmd:"" help:"Initialize definition file from existing resources"`
 	Deploy   DeployOption   `cmd:"" help:"Deploy application"`
 	Diff     DiffOption     `cmd:"" help:"Show diff of definitions"`
-	Render   RenderOption   `cmd:"" help:"Render definition files"`
+	Render   RenderOption   `cmd:"" help:"Render definition file"`
 	Status   StatusOption   `cmd:"" help:"Show status of application"`
 	Versions VersionsOption `cmd:"" help:"List application versions"`
 	Rollback RollbackOption `cmd:"" help:"Rollback to previous version"`
 
 	// Global flags
-	Config    string           `name:"config" short:"c" help:"Path to config file" default:"config.jsonnet" env:"APPRUN_DEDICATED_CONFIG"`
+	App       string           `name:"app" help:"Path to application definition file" default:"application.jsonnet" env:"APPRUN_DEDICATED_APP"`
 	Debug     bool             `help:"Enable debug mode" env:"DEBUG"`
 	LogFormat string           `name:"log-format" help:"Log format (text or json)" default:"text" enum:"text,json" env:"APPRUN_DEDICATED_LOG_FORMAT"`
 	TFState   string           `name:"tfstate" help:"URL to terraform.tfstate" env:"APPRUN_DEDICATED_TFSTATE"`
@@ -34,7 +34,7 @@ type CLI struct {
 	sc     *saclient.Client
 	client *v1.Client
 	loader *armed.CLI
-	config *Config
+	app    *ApplicationDefinition
 }
 
 func (c *CLI) Run(ctx context.Context) error {
@@ -50,12 +50,12 @@ func (c *CLI) Run(ctx context.Context) error {
 		return err
 	}
 
-	// init generates config file, so skip loadConfig
+	// init generates definition file, so skip loading
 	if k.Command() == "init" {
 		return c.runInit(ctx)
 	}
 
-	if err := c.loadConfig(ctx); err != nil {
+	if err := c.loadApp(ctx); err != nil {
 		return err
 	}
 
