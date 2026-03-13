@@ -4,6 +4,7 @@ go 1.25.5
 
 require (
 	github.com/alecthomas/kong v1.14.0
+	github.com/fatih/color v1.18.0
 	github.com/fujiwara/jsonnet-armed v0.1.1
 	github.com/fujiwara/sakura-secrets-cli v0.3.0
 	github.com/fujiwara/sloghandler v0.1.0
@@ -67,7 +68,6 @@ require (
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
-	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/errors v0.7.1 // indirect
