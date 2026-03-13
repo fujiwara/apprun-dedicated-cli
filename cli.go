@@ -128,6 +128,4 @@ type VersionsOption struct{}
 type RollbackOption struct{}
 
 // Placeholder command implementations (TODO)
-func (c *CLI) runDiff(ctx context.Context) error     { return fmt.Errorf("not implemented yet") }
-func (c *CLI) runVersions(ctx context.Context) error { return fmt.Errorf("not implemented yet") }
 func (c *CLI) runRollback(ctx context.Context) error { return fmt.Errorf("not implemented yet") }
