@@ -27,6 +27,7 @@ Usage: apprun-dedicated-cli <command> [flags]
 Commands:
   init        Initialize definition file from existing resources
   deploy      Deploy application
+  delete      Delete application
   render      Render definition file
   status      Show status of application
   diff        Show diff between local definition and deployed version
@@ -156,6 +157,21 @@ Deploy the application. Creates the application if it does not exist, then creat
 ```console
 $ apprun-dedicated-cli deploy --app application.jsonnet
 ```
+
+### delete
+
+Delete an application. Prompts for confirmation unless `--force` is specified.
+
+```console
+$ apprun-dedicated-cli delete --app application.jsonnet
+
+# Skip confirmation
+$ apprun-dedicated-cli delete --force --app application.jsonnet
+```
+
+| Flag | Description |
+|------|-------------|
+| `--force` | Skip confirmation prompt |
 
 ### status
 

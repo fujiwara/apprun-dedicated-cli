@@ -17,6 +17,7 @@ type CLI struct {
 	// Commands
 	Init     InitOption     `cmd:"" help:"Initialize definition file from existing resources"`
 	Deploy   DeployOption   `cmd:"" help:"Deploy application"`
+	Delete   DeleteOption   `cmd:"" help:"Delete application"`
 	Diff     DiffOption     `cmd:"" help:"Show diff of definitions"`
 	Render   RenderOption   `cmd:"" help:"Render definition file"`
 	Status   StatusOption   `cmd:"" help:"Show status of application"`
@@ -63,6 +64,8 @@ func (c *CLI) Run(ctx context.Context) error {
 	switch k.Command() {
 	case "deploy":
 		err = c.runDeploy(ctx)
+	case "delete":
+		err = c.runDelete(ctx)
 	case "diff":
 		err = c.runDiff(ctx)
 	case "render":
@@ -121,6 +124,9 @@ type InitOption struct {
 	OutputDir   string `name:"output-dir" short:"o" help:"Output directory for generated files" default:"."`
 }
 type DeployOption struct{}
+type DeleteOption struct {
+	Force bool `help:"Skip confirmation prompt" default:"false"`
+}
 type DiffOption struct{}
 type RenderOption struct{}
 type StatusOption struct{}
