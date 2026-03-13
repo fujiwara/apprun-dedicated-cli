@@ -29,9 +29,9 @@ Commands:
   deploy      Deploy application
   render      Render definition file
   status      Show status of application
-  diff        Show diff of definitions (not yet implemented)
-  versions    List application versions (not yet implemented)
-  rollback    Rollback to previous version (not yet implemented)
+  diff        Show diff between local definition and deployed version
+  versions    List application versions
+  rollback    Rollback to a previous version
 
 Global Flags:
   --app=STRING          Path to application definition file (default: "application.jsonnet", env: APPRUN_DEDICATED_APP)
@@ -67,48 +67,59 @@ The application definition is written in [Jsonnet](https://jsonnet.org/) format.
 
 ### Definition Fields
 
+Most fields correspond to the [`version.CreateParams`](https://pkg.go.dev/github.com/sacloud/apprun-dedicated-api-go/apis/version#CreateParams) in the AppRun Dedicated API Go SDK.
+
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `cluster` | string | yes | Cluster name |
-| `name` | string | yes | Application name |
+| `cluster` | string | yes | Cluster name to deploy to (CLI only, not sent to API) |
+| `name` | string | yes | Application name (CLI only, not sent to API) |
 | `cpu` | int | | CPU cores |
 | `memory` | int | | Memory in GB |
 | `image` | string | | Container image (e.g., `"ghcr.io/example/app:v1.0.0"`) |
 | `scalingMode` | string | | `"fixed"` or `"auto"` |
-| `fixedScale` | int | | Number of instances (when scalingMode is `"fixed"`) |
-| `minScale` | int | | Minimum instances (when scalingMode is `"auto"`) |
-| `maxScale` | int | | Maximum instances (when scalingMode is `"auto"`) |
+| `fixedScale` | int | | Number of instances (fixed scaling) |
+| `minScale` | int | | Minimum instances (auto scaling) |
+| `maxScale` | int | | Maximum instances (auto scaling) |
 | `scaleInThreshold` | int | | Scale-in threshold percentage |
 | `scaleOutThreshold` | int | | Scale-out threshold percentage |
 | `cmd` | []string | | Override container command |
 | `exposedPorts` | []ExposedPort | | Port exposure and LB routing settings |
-| `env` | []EnvVar | | Environment variables |
+| `env` | []EnvVar | | Environment variables (`key`, `value`, `secret`) |
 
-### ExposedPort
+### ExposedPort and Load Balancer Routing
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `targetPort` | int | Container port |
-| `loadBalancerPort` | int | Load balancer port (requires `host`) |
-| `useLetsEncrypt` | bool | Enable Let's Encrypt TLS |
-| `host` | []string | Hostnames for L7 routing |
-| `healthCheck` | HealthCheck | Health check settings |
+In AppRun Dedicated, the Load Balancer (LB) is a shared resource within a cluster managed separately (e.g., via Terraform). The LB performs **host-based L7 routing** — it inspects the `Host` header of incoming HTTP requests and routes them to the appropriate application.
 
-### HealthCheck
+`exposedPorts` defines how your application connects to the LB:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `path` | string | Health check path |
-| `intervalSeconds` | int | Check interval |
-| `timeoutSeconds` | int | Check timeout |
+```
+Client → LB (host-based routing) → Application Container
+         port 80/443                 targetPort 8080
+         Host: app.example.com
+```
 
-### EnvVar
+- **`targetPort`** — The port your container listens on.
+- **`loadBalancerPort`** — The LB port that should route traffic to this application. This must match an existing LB port in the cluster.
+- **`host`** — The hostname(s) the LB uses to route requests to this application. **Required when `loadBalancerPort` is set.** Multiple applications can share the same LB port as long as they have different hostnames.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `key` | string | Variable name |
-| `value` | string | Variable value |
-| `secret` | bool | Whether the value is a secret |
+If your application does not need external access via the LB, you can omit `loadBalancerPort` and `host`, and only set `targetPort`.
+
+Example: Expose an app on LB port 80 with hostname routing and health check:
+
+```jsonnet
+exposedPorts: [
+  {
+    targetPort: 8080,
+    loadBalancerPort: 80,
+    host: ["app.example.com"],
+    healthCheck: {
+      path: "/health",
+      intervalSeconds: 10,
+      timeoutSeconds: 5,
+    },
+  },
+],
+```
 
 ## Jsonnet Functions
 
@@ -161,6 +172,38 @@ Render and output the evaluated application definition as JSON.
 ```console
 $ apprun-dedicated-cli render --app application.jsonnet
 ```
+
+### diff
+
+Show the difference between the local definition file and the currently deployed (active) version. Output is in colored unified diff format.
+
+```console
+$ apprun-dedicated-cli diff --app application.jsonnet
+```
+
+### versions
+
+List all versions of the application as JSON. Each entry includes the version number, image, active node count, whether it is the active version, and the creation timestamp.
+
+```console
+$ apprun-dedicated-cli versions --app application.jsonnet
+```
+
+### rollback
+
+Rollback to a previous version. By default, activates the latest existing version before the current active version. Use `--version` to specify a target version.
+
+```console
+# Rollback to the previous version
+$ apprun-dedicated-cli rollback --app application.jsonnet
+
+# Rollback to a specific version
+$ apprun-dedicated-cli rollback --version 3 --app application.jsonnet
+```
+
+| Flag | Description |
+|------|-------------|
+| `--version` | Version number to rollback to (default: previous existing version) |
 
 ## License
 

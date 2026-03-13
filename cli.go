@@ -125,7 +125,6 @@ type DiffOption struct{}
 type RenderOption struct{}
 type StatusOption struct{}
 type VersionsOption struct{}
-type RollbackOption struct{}
-
-// Placeholder command implementations (TODO)
-func (c *CLI) runRollback(ctx context.Context) error { return fmt.Errorf("not implemented yet") }
+type RollbackOption struct {
+	Version *int32 `help:"Version number to rollback to (default: previous existing version)"`
+}
