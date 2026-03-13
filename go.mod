@@ -3,6 +3,7 @@ module github.com/fujiwara/apprun-dedicated-cli
 go 1.25.5
 
 require (
+	github.com/aereal/jsondiff v0.4.1
 	github.com/alecthomas/kong v1.14.0
 	github.com/fatih/color v1.18.0
 	github.com/fujiwara/jsonnet-armed v0.1.1
@@ -90,6 +91,7 @@ require (
 	github.com/hashicorp/go-tfe v1.84.0 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/jsonapi v1.4.3-0.20250220162346-81a76b606f3e // indirect
+	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/itchyny/gojq v0.12.18 // indirect
 	github.com/itchyny/timefmt-go v0.1.7 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
