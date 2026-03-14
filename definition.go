@@ -74,9 +74,19 @@ func (c *CLI) loadApp(ctx context.Context) error {
 	if err := c.loader.Run(ctx); err != nil {
 		return fmt.Errorf("failed to evaluate %s: %w", c.App, err)
 	}
+	// First try strict decoding to detect unknown fields.
+	// Since the input is jsonnet output, it is always valid JSON,
+	// so errors here are only caused by unknown fields.
 	def := &ApplicationDefinition{}
-	if err := json.Unmarshal(buf.Bytes(), def); err != nil {
-		return fmt.Errorf("failed to unmarshal application definition: %w", err)
+	strict := json.NewDecoder(bytes.NewReader(buf.Bytes()))
+	strict.DisallowUnknownFields()
+	if err := strict.Decode(def); err != nil {
+		slog.Warn("unknown fields in application definition", "err", err)
+		// Re-unmarshal ignoring unknown fields
+		def = &ApplicationDefinition{}
+		if err := json.Unmarshal(buf.Bytes(), def); err != nil {
+			return fmt.Errorf("failed to unmarshal application definition: %w", err)
+		}
 	}
 	if err := def.Validate(); err != nil {
 		return fmt.Errorf("invalid application definition: %w", err)
