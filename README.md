@@ -251,11 +251,18 @@ $ apprun-dedicated-cli init --cluster my-cluster --application my-app -o ./myapp
 
 ### deploy
 
-Deploy the application. Creates the application if it does not exist, then creates a new version and activates it (idempotent).
+Deploy the application. Creates the application if it does not exist, then creates a new version and activates it (idempotent). By default, waits for all containers to be running before returning.
 
 ```console
 $ apprun-dedicated-cli deploy --app application.jsonnet
+
+# Skip waiting for deployment to complete
+$ apprun-dedicated-cli deploy --no-wait --app application.jsonnet
 ```
+
+| Flag | Description |
+|------|-------------|
+| `--no-wait` | Skip waiting for deployment to complete (default: `--wait`) |
 
 ### delete
 
@@ -340,6 +347,7 @@ $ apprun-dedicated-cli rollback --app application.jsonnet
 | Flag | Description |
 |------|-------------|
 | `--target` | Version number to activate (default: previous version, or latest if deactivated) |
+| `--no-wait` | Skip waiting for deployment to complete (default: `--wait`) |
 
 ### cluster
 

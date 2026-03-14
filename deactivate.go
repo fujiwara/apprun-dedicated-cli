@@ -37,8 +37,13 @@ func (c *CLI) runDeactivate(ctx context.Context) error {
 		return fmt.Errorf("failed to deactivate application: %w", err)
 	}
 
-	slog.Info("waiting for application to stop")
-	if err := waitForStopped(ctx, appOp, appDetail.ApplicationID); err != nil {
+	if !c.Deactivate.Wait {
+		slog.Info("deactivated application", "name", c.app.Name)
+		return nil
+	}
+
+	slog.Info("waiting for application to stop", "timeout", c.Deactivate.WaitTimeout)
+	if err := waitForStopped(ctx, appOp, appDetail.ApplicationID, c.Deactivate.WaitTimeout); err != nil {
 		return err
 	}
 

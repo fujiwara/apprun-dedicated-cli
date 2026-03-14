@@ -45,3 +45,4 @@ make dist
 - Run `go fmt ./...` before committing
 - Binary name: `apprun-dedicated-cli`
 - When adding or changing features, always update README.md accordingly
+- Avoid negated flags/fields (e.g., `NoWait`). Use positive names with `default:"true" negatable:""` so kong generates `--no-*` automatically

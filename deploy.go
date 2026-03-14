@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/google/uuid"
 	apprun "github.com/sacloud/apprun-dedicated-api-go"
+	"github.com/sacloud/apprun-dedicated-api-go/apis/application"
 	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
 )
 
@@ -62,5 +64,50 @@ func (c *CLI) runDeploy(ctx context.Context) error {
 	}
 	slog.Info("activated version", "version", newVer)
 
-	return nil
+	if !c.Deploy.Wait {
+		return nil
+	}
+
+	// Wait for deployment to complete
+	slog.Info("waiting for deployment to complete", "timeout", c.Deploy.WaitTimeout)
+	return waitForDeployment(ctx, appOp, appDetail.ApplicationID, newVer, c.Deploy.WaitTimeout)
+}
+
+func waitForDeployment(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID, version int32, timeoutDuration time.Duration) error {
+	ticker := time.NewTicker(waitInterval)
+	defer ticker.Stop()
+	timeout := time.After(timeoutDuration)
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-timeout:
+			return fmt.Errorf("timed out waiting for deployment to complete")
+		case <-ticker.C:
+			placements, err := appOp.Containers(ctx, appID)
+			if err != nil {
+				slog.Warn("failed to get containers", "err", err)
+				continue
+			}
+
+			var running, total int
+			for _, p := range placements {
+				for _, c := range p.ContainersStats.Containers {
+					if c.ApplicationVersion == int64(version) {
+						total++
+						if c.State == "running" {
+							running++
+						}
+					}
+				}
+			}
+
+			if total > 0 && running == total {
+				slog.Info("deployment complete", "version", version, "running", running)
+				return nil
+			}
+			slog.Info("waiting for containers", "version", version, "running", running, "total", total)
+		}
+	}
 }

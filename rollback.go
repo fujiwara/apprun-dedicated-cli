@@ -68,7 +68,13 @@ func (c *CLI) runRollback(ctx context.Context) error {
 		return fmt.Errorf("failed to activate version %d: %w", targetVer, err)
 	}
 	slog.Info("activated version", "version", targetVer)
-	return nil
+
+	if !c.Rollback.Wait {
+		return nil
+	}
+
+	slog.Info("waiting for deployment to complete", "timeout", c.Rollback.WaitTimeout)
+	return waitForDeployment(ctx, appOp, appDetail.ApplicationID, targetVer, c.Rollback.WaitTimeout)
 }
 
 // findPreviousVersion finds the latest existing version before the given active version.

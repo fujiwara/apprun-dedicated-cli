@@ -5,12 +5,17 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/alecthomas/kong"
 	armed "github.com/fujiwara/jsonnet-armed"
 	"github.com/fujiwara/sloghandler"
 	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
 	"github.com/sacloud/saclient-go"
+)
+
+const (
+	waitInterval = 5 * time.Second
 )
 
 type CLI struct {
@@ -141,20 +146,29 @@ type InitOption struct {
 	Application string `help:"Application name" required:""`
 	OutputDir   string `name:"output-dir" short:"o" help:"Output directory for generated files" default:"."`
 }
-type DeployOption struct{}
+type WaitOption struct {
+	Wait        bool          `help:"Wait for completion" default:"true" negatable:""`
+	WaitTimeout time.Duration `name:"wait-timeout" help:"Timeout for waiting" default:"5m" env:"APPRUN_DEDICATED_WAIT_TIMEOUT"`
+}
+type DeployOption struct {
+	WaitOption `embed:""`
+}
 type DeleteOption struct {
-	Force bool `help:"Skip confirmation prompt" default:"false"`
+	Force      bool `help:"Skip confirmation prompt" default:"false"`
+	WaitOption `embed:""`
 }
 type DeactivateOption struct {
-	Force bool `help:"Skip confirmation prompt" default:"false"`
+	Force      bool `help:"Skip confirmation prompt" default:"false"`
+	WaitOption `embed:""`
 }
 type DiffOption struct{}
 type RenderOption struct{}
 type StatusOption struct{}
 type VersionsOption struct{}
 type RollbackOption struct {
-	Target *int32 `name:"target" help:"Version number to rollback to (default: previous existing version)"`
-	Force  bool   `help:"Skip confirmation prompt" default:"false"`
+	Target     *int32 `name:"target" help:"Version number to rollback to (default: previous existing version)"`
+	Force      bool   `help:"Skip confirmation prompt" default:"false"`
+	WaitOption `embed:""`
 }
 type ClusterCmd struct{}
 type LoadBalancerCmd struct{}
