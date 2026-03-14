@@ -46,3 +46,4 @@ make dist
 - Binary name: `apprun-dedicated-cli`
 - When adding or changing features, always update README.md accordingly
 - Avoid negated flags/fields (e.g., `NoWait`). Use positive names with `default:"true" negatable:""` so kong generates `--no-*` automatically
+- When pushing additional commits to a PR, review and update the PR description to reflect the current changes

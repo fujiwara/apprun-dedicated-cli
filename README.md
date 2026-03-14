@@ -281,18 +281,22 @@ $ apprun-dedicated-cli delete --force --app application.jsonnet
 
 ### deactivate
 
-Deactivate an application. This stops the application without deleting it — the application and its versions are preserved. Waits for the application to fully stop before returning. Prompts for confirmation unless `--force` is specified.
+Deactivate an application. This stops the application without deleting it — the application and its versions are preserved. By default, waits for the application to fully stop before returning. Prompts for confirmation unless `--force` is specified.
 
 ```console
 $ apprun-dedicated-cli deactivate --app application.jsonnet
 
 # Skip confirmation
 $ apprun-dedicated-cli deactivate --force --app application.jsonnet
+
+# Return immediately without waiting for stop
+$ apprun-dedicated-cli deactivate --no-wait --app application.jsonnet
 ```
 
 | Flag | Description |
 |------|-------------|
 | `--force` | Skip confirmation prompt |
+| `--no-wait` | Skip waiting for application to stop (default: `--wait`) |
 
 ### status
 
