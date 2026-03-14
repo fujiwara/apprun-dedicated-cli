@@ -18,6 +18,7 @@ func versionDetailToDefinition(v *version.VersionDetail) *ApplicationDefinition 
 		ScaleOutThreshold: v.ScaleOutThreshold,
 		Image:             v.Image,
 		Cmd:               v.Cmd,
+		RegistryUsername:  v.RegistryUsername,
 	}
 
 	for _, ep := range v.ExposedPorts {
@@ -67,6 +68,13 @@ func definitionToCreateParams(def *ApplicationDefinition) version.CreateParams {
 		MaxScale:          def.MaxScale,
 		ScaleInThreshold:  def.ScaleInThreshold,
 		ScaleOutThreshold: def.ScaleOutThreshold,
+	}
+
+	if def.RegistryUsername != nil {
+		params.RegistryUsername = def.RegistryUsername
+	}
+	if def.RegistryPassword != nil {
+		params.RegistryPassword = def.RegistryPassword
 	}
 
 	for _, ep := range def.ExposedPorts {

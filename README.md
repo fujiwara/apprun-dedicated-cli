@@ -126,8 +126,25 @@ Most fields correspond to the [`version.CreateParams`](https://pkg.go.dev/github
 | `scaleInThreshold` | int | | Scale-in threshold percentage |
 | `scaleOutThreshold` | int | | Scale-out threshold percentage |
 | `cmd` | []string | | Override container command |
+| `registryUsername` | string | | Container registry username |
+| `registryPassword` | string | | Container registry password |
 | `exposedPorts` | []ExposedPort | | Port exposure and LB routing settings |
 | `env` | []EnvVar | | Environment variables (`key`, `value`, `secret`) |
+
+### Private Container Registry
+
+To pull images from a private registry, set `registryUsername` and `registryPassword` in the definition file. Use jsonnet native functions to avoid hardcoding credentials:
+
+```jsonnet
+{
+  image: "registry.example.com/my-app:v1.0.0",
+  registryUsername: std.native("env")("REGISTRY_USERNAME", ""),
+  registryPassword: std.native("env")("REGISTRY_PASSWORD", ""),
+  // ...
+}
+```
+
+When `registryPassword` is set to a non-empty string, the password is updated on each deploy. When omitted or empty (`""`), the existing password is kept for subsequent deploys.
 
 ### ExposedPort and Load Balancer Routing
 
