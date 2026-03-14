@@ -6,9 +6,44 @@ Inspired by [ecspresso](https://github.com/kayac/ecspresso) for Amazon ECS, this
 
 ## Install
 
+### Binary releases
+
+Download from [GitHub Releases](https://github.com/fujiwara/apprun-dedicated-cli/releases).
+
+### Homebrew
+
+```console
+$ brew install fujiwara/tap/apprun-dedicated-cli
+```
+
+### Go install
+
 ```console
 $ go install github.com/fujiwara/apprun-dedicated-cli/cmd/apprun-dedicated-cli@latest
 ```
+
+### GitHub Actions
+
+```yaml
+- uses: fujiwara/apprun-dedicated-cli@v0
+  with:
+    version: v0.1.0
+```
+
+You can also specify a version file or run commands directly:
+
+```yaml
+- uses: fujiwara/apprun-dedicated-cli@v0
+  with:
+    version: v0.1.0
+    args: "deploy --app application.jsonnet"
+```
+
+| Input | Description |
+|-------|-------------|
+| `version` | Version to install (e.g., `v0.1.0`) |
+| `version-file` | File containing the version (alternative to `version`) |
+| `args` | Arguments to run after installation (optional) |
 
 ## Authentication
 
