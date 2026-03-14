@@ -74,9 +74,9 @@ func (c *CLI) runDeploy(ctx context.Context) error {
 }
 
 func waitForDeployment(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID, version int32) error {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
-	timeout := time.After(5 * time.Minute)
+	timeout := time.After(waitTimeout)
 
 	for {
 		select {

@@ -5,12 +5,18 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/alecthomas/kong"
 	armed "github.com/fujiwara/jsonnet-armed"
 	"github.com/fujiwara/sloghandler"
 	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
 	"github.com/sacloud/saclient-go"
+)
+
+const (
+	waitInterval = 5 * time.Second
+	waitTimeout  = 5 * time.Minute
 )
 
 type CLI struct {

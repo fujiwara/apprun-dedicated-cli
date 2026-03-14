@@ -53,9 +53,9 @@ func (c *CLI) runDelete(ctx context.Context) error {
 }
 
 func waitForStopped(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID) error {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
-	timeout := time.After(3 * time.Minute)
+	timeout := time.After(waitTimeout)
 
 	for {
 		select {
@@ -78,9 +78,9 @@ func waitForStopped(ctx context.Context, appOp *application.ApplicationOp, appID
 }
 
 func waitForDeleted(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID) error {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
-	timeout := time.After(3 * time.Minute)
+	timeout := time.After(waitTimeout)
 
 	// Try immediately first
 	if err := appOp.Delete(ctx, appID); err == nil {
