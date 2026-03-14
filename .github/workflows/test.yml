@@ -32,3 +32,8 @@ jobs:
       - uses: ./
         with:
           version: v0.0.1
+      - name: Verify installed version
+        run: |
+          VERSION=$(apprun-dedicated-cli --version 2>&1)
+          echo "Got: $VERSION"
+          echo "$VERSION" | grep -q "v0.0.1" || { echo "Version mismatch"; exit 1; }
