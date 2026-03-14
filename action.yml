@@ -1,0 +1,53 @@
+inputs:
+  version:
+    description: "A version to install apprun-dedicated-cli"
+    required: true
+  version-file:
+    description: "File name that contains the apprun-dedicated-cli version."
+    required: false
+  args:
+    description: "Run arguments for apprun-dedicated-cli"
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Set apprun-dedicated-cli version
+      id: set-version
+      run: |
+        VERSION=${{ inputs.version }}
+        if [ -n "${{ inputs.version-file }}" ]; then
+          VERSION=v$(cat ${{ inputs.version-file }})
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Set file name
+      id: set-filename
+      run: |
+        case "${{ runner.os }}" in
+          Linux) BIN_OS="linux" ;;
+          macOS) BIN_OS="darwin" ;;
+          *) BIN_OS="linux" ;;
+        esac
+
+        case "${{ runner.arch }}" in
+          X64) BIN_ARCH="amd64" ;;
+          ARM64) BIN_ARCH="arm64" ;;
+          *) BIN_ARCH="amd64" ;;
+        esac
+
+        FILENAME=apprun-dedicated-cli_${{ steps.set-version.outputs.VERSION }}_${BIN_OS}_${BIN_ARCH}.tar.gz
+        echo "FILENAME=$FILENAME" >> $GITHUB_OUTPUT
+      shell: bash
+    - run: |
+        mkdir -p /tmp/apprun-dedicated-cli-${{ steps.set-version.outputs.VERSION }}
+        cd /tmp/apprun-dedicated-cli-${{ steps.set-version.outputs.VERSION }}
+        curl -sL https://github.com/fujiwara/apprun-dedicated-cli/releases/download/${{ steps.set-version.outputs.VERSION }}/${{ steps.set-filename.outputs.FILENAME }} | tar zxvf -
+        sudo install apprun-dedicated-cli /usr/local/bin
+      shell: bash
+
+    - name: Run apprun-dedicated-cli
+      run: |
+        apprun-dedicated-cli --version
+        apprun-dedicated-cli ${{ inputs.args }}
+      shell: bash
+      if: ${{ inputs.args != '' }}

@@ -23,3 +23,24 @@ jobs:
       - name: Build & Test
         run: |
           go test -race ./...
+
+  action:
+    name: Test action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Get latest release version
+        id: latest
+        run: |
+          VERSION=$(gh release view --json tagName -q .tagName)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: ./
+        with:
+          version: ${{ steps.latest.outputs.VERSION }}
+      - name: Verify installed version
+        run: |
+          VERSION=$(apprun-dedicated-cli --version 2>&1)
+          echo "Got: $VERSION"
+          echo "$VERSION" | grep -q "${{ steps.latest.outputs.VERSION }}" || { echo "Version mismatch"; exit 1; }
