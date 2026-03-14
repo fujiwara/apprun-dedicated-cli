@@ -18,13 +18,18 @@ import (
 func (c *CLI) runDiff(ctx context.Context) error {
 	appOp := apprun.NewApplicationOp(c.client)
 	appDetail, err := findApplicationByName(ctx, appOp, c.app.Cluster, c.app.Name)
-	if err != nil {
-		return err
-	}
 
-	// Get remote (deployed) definition from active version
 	var remote *ApplicationDefinition
-	if appDetail.ActiveVersion != nil {
+	var remoteLabel string
+	if err != nil {
+		// Application not found: diff against empty definition (will be created on deploy)
+		slog.Info("application not found, showing diff for new creation", "name", c.app.Name)
+		remote = &ApplicationDefinition{
+			Cluster: c.app.Cluster,
+			Name:    c.app.Name,
+		}
+		remoteLabel = "(not yet created)"
+	} else if appDetail.ActiveVersion != nil {
 		verOp := apprun.NewVersionOp(c.client, appDetail.ApplicationID)
 		verDetail, err := verOp.Read(ctx, v1.ApplicationVersionNumber(*appDetail.ActiveVersion))
 		if err != nil {
@@ -33,18 +38,19 @@ func (c *CLI) runDiff(ctx context.Context) error {
 		remote = versionDetailToDefinition(verDetail)
 		remote.Cluster = c.app.Cluster
 		remote.Name = c.app.Name
+		remoteLabel = uuid.UUID(appDetail.ApplicationID).String()
 	} else {
 		remote = &ApplicationDefinition{
 			Cluster: c.app.Cluster,
 			Name:    c.app.Name,
 		}
+		remoteLabel = uuid.UUID(appDetail.ApplicationID).String()
 	}
 
-	remoteID := uuid.UUID(appDetail.ApplicationID).String()
-	slog.Info("comparing", "local", c.App, "remote", remoteID)
+	slog.Info("comparing", "local", c.App, "remote", remoteLabel)
 
 	diff, err := jsondiff.Diff(
-		&jsondiff.Input{Name: remoteID, X: toMap(remote)},
+		&jsondiff.Input{Name: remoteLabel, X: toMap(remote)},
 		&jsondiff.Input{Name: c.App, X: toMap(c.app)},
 	)
 	if err != nil {

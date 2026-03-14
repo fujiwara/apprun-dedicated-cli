@@ -15,14 +15,17 @@ import (
 
 type CLI struct {
 	// Commands
-	Init     InitOption     `cmd:"" help:"Initialize definition file from existing resources"`
-	Deploy   DeployOption   `cmd:"" help:"Deploy application"`
-	Delete   DeleteOption   `cmd:"" help:"Delete application"`
-	Diff     DiffOption     `cmd:"" help:"Show diff of definitions"`
-	Render   RenderOption   `cmd:"" help:"Render definition file"`
-	Status   StatusOption   `cmd:"" help:"Show status of application"`
-	Versions VersionsOption `cmd:"" help:"List application versions"`
-	Rollback RollbackOption `cmd:"" help:"Rollback to previous version"`
+	Init         InitOption      `cmd:"" help:"Initialize definition file from existing resources"`
+	Deploy       DeployOption    `cmd:"" help:"Deploy application"`
+	Delete       DeleteOption    `cmd:"" help:"Delete application"`
+	Diff         DiffOption      `cmd:"" help:"Show diff of definitions"`
+	Render       RenderOption    `cmd:"" help:"Render definition file"`
+	Status       StatusOption    `cmd:"" help:"Show status of application"`
+	Versions     VersionsOption  `cmd:"" help:"List application versions"`
+	Rollback     RollbackOption  `cmd:"" help:"Rollback to previous version"`
+	Cluster      ClusterCmd      `cmd:"" help:"Show cluster information"`
+	LoadBalancer LoadBalancerCmd `cmd:"load-balancer" help:"Show load balancer information"`
+	Certificate  CertificateCmd  `cmd:"" help:"Show certificate information"`
 
 	// Global flags
 	App       string           `name:"app" help:"Path to application definition file" default:"application.jsonnet" env:"APPRUN_DEDICATED_APP"`
@@ -76,6 +79,12 @@ func (c *CLI) Run(ctx context.Context) error {
 		err = c.runVersions(ctx)
 	case "rollback":
 		err = c.runRollback(ctx)
+	case "cluster":
+		err = c.runCluster(ctx)
+	case "load-balancer":
+		err = c.runLoadBalancer(ctx)
+	case "certificate":
+		err = c.runCertificate(ctx)
 	default:
 		err = fmt.Errorf("unknown command: %s", k.Command())
 	}
@@ -135,6 +144,9 @@ type RollbackOption struct {
 	Target *int32 `name:"target" help:"Version number to rollback to (default: previous existing version)"`
 	Force  bool   `help:"Skip confirmation prompt" default:"false"`
 }
+type ClusterCmd struct{}
+type LoadBalancerCmd struct{}
+type CertificateCmd struct{}
 
 func confirm(msg string) bool {
 	fmt.Fprintf(os.Stderr, "%s [y/N]: ", msg)

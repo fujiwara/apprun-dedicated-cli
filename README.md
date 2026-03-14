@@ -32,7 +32,10 @@ Commands:
   status      Show status of application
   diff        Show diff between local definition and deployed version
   versions    List application versions
-  rollback    Rollback to a previous version
+  rollback       Rollback to a previous version
+  cluster        Show cluster information
+  load-balancer  Show load balancer information
+  certificate    Show certificate information
 
 Global Flags:
   --app=STRING          Path to application definition file (default: "application.jsonnet", env: APPRUN_DEDICATED_APP)
@@ -103,6 +106,8 @@ Client → LB (host-based routing) → Application Container
 - **`loadBalancerPort`** — The LB port that should route traffic to this application. This must match an existing LB port in the cluster.
 - **`host`** — The hostname(s) the LB uses to route requests to this application. **Required when `loadBalancerPort` is set.** Multiple applications can share the same LB port as long as they have different hostnames.
 
+- **`useLetsEncrypt`** — Enable automatic TLS certificate provisioning via Let's Encrypt (see [HTTPS with Let's Encrypt](#https-with-lets-encrypt) below).
+
 If your application does not need external access via the LB, you can omit `loadBalancerPort` and `host`, and only set `targetPort`.
 
 Example: Expose an app on LB port 80 with hostname routing and health check:
@@ -121,6 +126,36 @@ exposedPorts: [
   },
 ],
 ```
+
+### HTTPS with Let's Encrypt
+
+To serve your application over HTTPS using Let's Encrypt automatic certificates:
+
+1. **Cluster prerequisites** — The cluster must be created with the following settings:
+   - **Let's Encrypt enabled** with a valid email address
+   - **LB port 80 (HTTP)** — Required for Let's Encrypt HTTP-01 challenge
+   - **LB port 443 (HTTPS)** — For serving HTTPS traffic
+
+   Note: LB ports can only be configured at cluster creation time and cannot be added later.
+
+2. **DNS setup** — Point your domain to the LB node's IP address. You can find the IP using the `load-balancer` command:
+   ```console
+   $ apprun-dedicated-cli load-balancer --app application.jsonnet
+   ```
+
+3. **Application definition** — Set `loadBalancerPort` to 443, specify your hostname in `host`, and enable `useLetsEncrypt`:
+   ```jsonnet
+   exposedPorts: [
+     {
+       targetPort: 8080,
+       loadBalancerPort: 443,
+       host: ["app.example.com"],
+       useLetsEncrypt: true,
+     },
+   ],
+   ```
+
+4. **Deploy** — Run `apprun-dedicated-cli deploy` to apply the configuration. Certificate provisioning by Let's Encrypt may take a few minutes.
 
 ## Jsonnet Functions
 
@@ -220,6 +255,30 @@ $ apprun-dedicated-cli rollback --target 3 --app application.jsonnet
 | Flag | Description |
 |------|-------------|
 | `--target` | Version number to rollback to (default: previous existing version) |
+
+### cluster
+
+Show cluster information as JSON. The cluster name is read from the application definition file.
+
+```console
+$ apprun-dedicated-cli cluster --app application.jsonnet
+```
+
+### load-balancer
+
+Show load balancer information as JSON. Lists all load balancers in the cluster.
+
+```console
+$ apprun-dedicated-cli load-balancer --app application.jsonnet
+```
+
+### certificate
+
+Show certificate information as JSON. Lists all certificates in the cluster.
+
+```console
+$ apprun-dedicated-cli certificate --app application.jsonnet
+```
 
 ## License
 
