@@ -136,10 +136,11 @@ Most fields correspond to the [`version.CreateParams`](https://pkg.go.dev/github
 To pull images from a private registry, set `registryUsername` and `registryPassword` in the definition file. Use jsonnet native functions to avoid hardcoding credentials:
 
 ```jsonnet
+local env = std.native("env");
 {
   image: "registry.example.com/my-app:v1.0.0",
-  registryUsername: std.native("env")("REGISTRY_USERNAME", ""),
-  registryPassword: std.native("env")("REGISTRY_PASSWORD", ""),
+  registryUsername: env("REGISTRY_USERNAME", ""),
+  registryPassword: env("REGISTRY_PASSWORD", ""),
   // ...
 }
 ```
@@ -241,15 +242,28 @@ Alternatively, `deploy` will create a new version from the current definition fi
 
 ## Jsonnet Functions
 
-The definition file is evaluated with [jsonnet-armed](https://github.com/fujiwara/jsonnet-armed), which provides the following native functions:
+The definition file is evaluated with [jsonnet-armed](https://github.com/fujiwara/jsonnet-armed), which provides the following native functions. Define local aliases for readability (e.g., `local env = std.native("env")`):
 
-- `std.native("env")("KEY", "default")` — Read environment variable
+- `std.native("env")("KEY", "default")` — Read environment variable with a default value
 - `std.native("must_env")("KEY")` — Read environment variable (error if not set)
 - `std.native("secret")("KEY")` — Read from [Sakura Cloud Secret Manager](https://github.com/fujiwara/sakura-secrets-cli)
 
 When `--tfstate` is specified, [tfstate-lookup](https://github.com/fujiwara/tfstate-lookup) functions are also available:
 
 - `std.native("tfstate")("resource.type.name.attr")` — Look up Terraform state values
+
+Example:
+
+```jsonnet
+local env = std.native("env");
+local must_env = std.native("must_env");
+{
+  image: must_env("APP_IMAGE"),
+  env: [
+    { key: "LOG_LEVEL", value: env("LOG_LEVEL", "info") },
+  ],
+}
+```
 
 ## Commands
 
