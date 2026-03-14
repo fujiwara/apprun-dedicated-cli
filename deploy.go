@@ -69,14 +69,14 @@ func (c *CLI) runDeploy(ctx context.Context) error {
 	}
 
 	// Wait for deployment to complete
-	slog.Info("waiting for deployment to complete")
-	return waitForDeployment(ctx, appOp, appDetail.ApplicationID, newVer)
+	slog.Info("waiting for deployment to complete", "timeout", c.Deploy.WaitTimeout)
+	return waitForDeployment(ctx, appOp, appDetail.ApplicationID, newVer, c.Deploy.WaitTimeout)
 }
 
-func waitForDeployment(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID, version int32) error {
+func waitForDeployment(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID, version int32, timeoutDuration time.Duration) error {
 	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
-	timeout := time.After(waitTimeout)
+	timeout := time.After(timeoutDuration)
 
 	for {
 		select {

@@ -39,23 +39,23 @@ func (c *CLI) runDelete(ctx context.Context) error {
 	}
 
 	// Wait for the application to stop running
-	slog.Info("waiting for application to stop")
-	if err := waitForStopped(ctx, appOp, appDetail.ApplicationID); err != nil {
+	slog.Info("waiting for application to stop", "timeout", c.Delete.WaitTimeout)
+	if err := waitForStopped(ctx, appOp, appDetail.ApplicationID, c.Delete.WaitTimeout); err != nil {
 		return err
 	}
 
 	slog.Info("deleting application", "name", c.app.Name, "id", appID)
-	if err := waitForDeleted(ctx, appOp, appDetail.ApplicationID); err != nil {
+	if err := waitForDeleted(ctx, appOp, appDetail.ApplicationID, c.Delete.WaitTimeout); err != nil {
 		return fmt.Errorf("failed to delete application: %w", err)
 	}
 	slog.Info("deleted application", "name", c.app.Name)
 	return nil
 }
 
-func waitForStopped(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID) error {
+func waitForStopped(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID, timeoutDuration time.Duration) error {
 	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
-	timeout := time.After(waitTimeout)
+	timeout := time.After(timeoutDuration)
 
 	for {
 		select {
@@ -77,10 +77,10 @@ func waitForStopped(ctx context.Context, appOp *application.ApplicationOp, appID
 	}
 }
 
-func waitForDeleted(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID) error {
+func waitForDeleted(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID, timeoutDuration time.Duration) error {
 	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
-	timeout := time.After(waitTimeout)
+	timeout := time.After(timeoutDuration)
 
 	// Try immediately first
 	if err := appOp.Delete(ctx, appID); err == nil {

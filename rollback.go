@@ -73,8 +73,8 @@ func (c *CLI) runRollback(ctx context.Context) error {
 		return nil
 	}
 
-	slog.Info("waiting for deployment to complete")
-	return waitForDeployment(ctx, appOp, appDetail.ApplicationID, targetVer)
+	slog.Info("waiting for deployment to complete", "timeout", c.Rollback.WaitTimeout)
+	return waitForDeployment(ctx, appOp, appDetail.ApplicationID, targetVer, c.Rollback.WaitTimeout)
 }
 
 // findPreviousVersion finds the latest existing version before the given active version.
