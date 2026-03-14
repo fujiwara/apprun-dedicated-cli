@@ -45,7 +45,7 @@ func (c *CLI) runDelete(ctx context.Context) error {
 	}
 
 	slog.Info("deleting application", "name", c.app.Name, "id", appID)
-	if err := appOp.Delete(ctx, appDetail.ApplicationID); err != nil {
+	if err := waitForDeleted(ctx, appOp, appDetail.ApplicationID); err != nil {
 		return fmt.Errorf("failed to delete application: %w", err)
 	}
 	slog.Info("deleted application", "name", c.app.Name)
@@ -73,6 +73,31 @@ func waitForStopped(ctx context.Context, appOp *application.ApplicationOp, appID
 				return nil
 			}
 			slog.Info("still running", "desired_count", *detail.DesiredCount)
+		}
+	}
+}
+
+func waitForDeleted(ctx context.Context, appOp *application.ApplicationOp, appID v1.ApplicationID) error {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+	timeout := time.After(3 * time.Minute)
+
+	// Try immediately first
+	if err := appOp.Delete(ctx, appID); err == nil {
+		return nil
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-timeout:
+			return fmt.Errorf("timed out waiting to delete application")
+		case <-ticker.C:
+			slog.Info("retrying delete")
+			if err := appOp.Delete(ctx, appID); err == nil {
+				return nil
+			}
 		}
 	}
 }

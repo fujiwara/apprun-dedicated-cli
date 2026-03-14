@@ -27,15 +27,18 @@ Usage: apprun-dedicated-cli <command> [flags]
 Commands:
   init        Initialize definition file from existing resources
   deploy      Deploy application
-  delete      Delete application
-  render      Render definition file
-  status      Show status of application
-  diff        Show diff between local definition and deployed version
-  versions    List application versions
+  delete         Delete application
+  deactivate     Deactivate application (stop without deleting)
+  render         Render definition file
+  status         Show status of application
+  diff           Show diff between local definition and deployed version
+  versions       List application versions
   rollback       Rollback to a previous version
   cluster        Show cluster information
-  load-balancer  Show load balancer information
+  load-balancer  Show load balancer information (alias: lb)
   certificate    Show certificate information
+  asg            Show auto scaling group information
+  worker-node    Show worker node information
 
 Global Flags:
   --app=STRING          Path to application definition file (default: "application.jsonnet", env: APPRUN_DEDICATED_APP)
@@ -157,6 +160,32 @@ To serve your application over HTTPS using Let's Encrypt automatic certificates:
 
 4. **Deploy** — Run `apprun-dedicated-cli deploy` to apply the configuration. Certificate provisioning by Let's Encrypt may take a few minutes.
 
+## Stopping and Resuming Applications
+
+AppRun Dedicated does not support scaling to zero instances. To stop an application, use `deactivate` to remove the active version, which stops all running containers.
+
+### Stop an application
+
+```console
+$ apprun-dedicated-cli deactivate --app application.jsonnet
+```
+
+The command deactivates the application and waits for it to fully stop. The application and all its versions are preserved.
+
+### Resume a stopped application
+
+Use `rollback` to reactivate the latest (or a specific) version:
+
+```console
+# Reactivate the latest version
+$ apprun-dedicated-cli rollback --app application.jsonnet
+
+# Reactivate a specific version
+$ apprun-dedicated-cli rollback --target 3 --app application.jsonnet
+```
+
+Alternatively, `deploy` will create a new version from the current definition file and activate it.
+
 ## Jsonnet Functions
 
 The definition file is evaluated with [jsonnet-armed](https://github.com/fujiwara/jsonnet-armed), which provides the following native functions:
@@ -208,6 +237,21 @@ $ apprun-dedicated-cli delete --force --app application.jsonnet
 |------|-------------|
 | `--force` | Skip confirmation prompt |
 
+### deactivate
+
+Deactivate an application. This stops the application without deleting it — the application and its versions are preserved. Waits for the application to fully stop before returning. Prompts for confirmation unless `--force` is specified.
+
+```console
+$ apprun-dedicated-cli deactivate --app application.jsonnet
+
+# Skip confirmation
+$ apprun-dedicated-cli deactivate --force --app application.jsonnet
+```
+
+| Flag | Description |
+|------|-------------|
+| `--force` | Skip confirmation prompt |
+
 ### status
 
 Show the current status of the application as JSON.
@@ -242,7 +286,10 @@ $ apprun-dedicated-cli versions --app application.jsonnet
 
 ### rollback
 
-Rollback to a previous version. By default, activates the latest existing version before the current active version. Use `--version` to specify a target version.
+Rollback to a previous version, or reactivate a deactivated application.
+
+- If the application is active, activates the latest version before the current one (or the version specified by `--target`).
+- If the application is deactivated, activates the latest version (or the version specified by `--target`).
 
 ```console
 # Rollback to the previous version
@@ -250,11 +297,14 @@ $ apprun-dedicated-cli rollback --app application.jsonnet
 
 # Rollback to a specific version
 $ apprun-dedicated-cli rollback --target 3 --app application.jsonnet
+
+# Reactivate a deactivated application
+$ apprun-dedicated-cli rollback --app application.jsonnet
 ```
 
 | Flag | Description |
 |------|-------------|
-| `--target` | Version number to rollback to (default: previous existing version) |
+| `--target` | Version number to activate (default: previous version, or latest if deactivated) |
 
 ### cluster
 
@@ -266,10 +316,11 @@ $ apprun-dedicated-cli cluster --app application.jsonnet
 
 ### load-balancer
 
-Show load balancer information as JSON. Lists all load balancers in the cluster.
+Show load balancer information as JSON. Lists all load balancers in the cluster, including node details with IP addresses. Also available as `lb`.
 
 ```console
 $ apprun-dedicated-cli load-balancer --app application.jsonnet
+$ apprun-dedicated-cli lb --app application.jsonnet
 ```
 
 ### certificate
@@ -278,6 +329,22 @@ Show certificate information as JSON. Lists all certificates in the cluster.
 
 ```console
 $ apprun-dedicated-cli certificate --app application.jsonnet
+```
+
+### asg
+
+Show auto scaling group information as JSON. Lists all auto scaling groups in the cluster.
+
+```console
+$ apprun-dedicated-cli asg --app application.jsonnet
+```
+
+### worker-node
+
+Show worker node information as JSON. Lists all worker nodes across auto scaling groups in the cluster.
+
+```console
+$ apprun-dedicated-cli worker-node --app application.jsonnet
 ```
 
 ## License

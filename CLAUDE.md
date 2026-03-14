@@ -37,9 +37,11 @@ make dist
 - `definition.go` — ApplicationDefinition struct & validation
 - `convert.go` — Conversion between definition & SDK types
 - `jsonnet.go` — Jsonnet VM setup with native functions
-- `deploy.go`, `delete.go`, `diff.go`, `init.go`, `status.go`, `render.go`, `versions.go`, `rollback.go` — Command implementations
+- `deploy.go`, `delete.go`, `deactivate.go`, `diff.go`, `init.go`, `status.go`, `render.go`, `versions.go`, `rollback.go` — Application command implementations
+- `cluster.go`, `loadbalancer.go`, `certificate.go`, `autoscalinggroup.go`, `workernode.go` — Cluster resource info commands
 
 ## Development Notes
 
 - Run `go fmt ./...` before committing
 - Binary name: `apprun-dedicated-cli`
+- When adding or changing features, always update README.md accordingly

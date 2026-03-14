@@ -15,17 +15,20 @@ import (
 
 type CLI struct {
 	// Commands
-	Init         InitOption      `cmd:"" help:"Initialize definition file from existing resources"`
-	Deploy       DeployOption    `cmd:"" help:"Deploy application"`
-	Delete       DeleteOption    `cmd:"" help:"Delete application"`
-	Diff         DiffOption      `cmd:"" help:"Show diff of definitions"`
-	Render       RenderOption    `cmd:"" help:"Render definition file"`
-	Status       StatusOption    `cmd:"" help:"Show status of application"`
-	Versions     VersionsOption  `cmd:"" help:"List application versions"`
-	Rollback     RollbackOption  `cmd:"" help:"Rollback to previous version"`
-	Cluster      ClusterCmd      `cmd:"" help:"Show cluster information"`
-	LoadBalancer LoadBalancerCmd `cmd:"load-balancer" help:"Show load balancer information"`
-	Certificate  CertificateCmd  `cmd:"" help:"Show certificate information"`
+	Init         InitOption       `cmd:"" help:"Initialize definition file from existing resources"`
+	Deploy       DeployOption     `cmd:"" help:"Deploy application"`
+	Delete       DeleteOption     `cmd:"" help:"Delete application"`
+	Deactivate   DeactivateOption `cmd:"" help:"Deactivate application (stop without deleting)"`
+	Diff         DiffOption       `cmd:"" help:"Show diff of definitions"`
+	Render       RenderOption     `cmd:"" help:"Render definition file"`
+	Status       StatusOption     `cmd:"" help:"Show status of application"`
+	Versions     VersionsOption   `cmd:"" help:"List application versions"`
+	Rollback     RollbackOption   `cmd:"" help:"Rollback to previous version"`
+	Cluster      ClusterCmd       `cmd:"" help:"Show cluster information"`
+	LoadBalancer LoadBalancerCmd  `cmd:"load-balancer" aliases:"lb" help:"Show load balancer information"`
+	Certificate  CertificateCmd   `cmd:"" help:"Show certificate information"`
+	ASG          ASGCmd           `cmd:"asg" help:"Show auto scaling group information"`
+	WorkerNode   WorkerNodeCmd    `cmd:"worker-node" help:"Show worker node information"`
 
 	// Global flags
 	App       string           `name:"app" help:"Path to application definition file" default:"application.jsonnet" env:"APPRUN_DEDICATED_APP"`
@@ -69,6 +72,8 @@ func (c *CLI) Run(ctx context.Context) error {
 		err = c.runDeploy(ctx)
 	case "delete":
 		err = c.runDelete(ctx)
+	case "deactivate":
+		err = c.runDeactivate(ctx)
 	case "diff":
 		err = c.runDiff(ctx)
 	case "render":
@@ -85,6 +90,10 @@ func (c *CLI) Run(ctx context.Context) error {
 		err = c.runLoadBalancer(ctx)
 	case "certificate":
 		err = c.runCertificate(ctx)
+	case "asg":
+		err = c.runAutoScalingGroup(ctx)
+	case "worker-node":
+		err = c.runWorkerNode(ctx)
 	default:
 		err = fmt.Errorf("unknown command: %s", k.Command())
 	}
@@ -136,6 +145,9 @@ type DeployOption struct{}
 type DeleteOption struct {
 	Force bool `help:"Skip confirmation prompt" default:"false"`
 }
+type DeactivateOption struct {
+	Force bool `help:"Skip confirmation prompt" default:"false"`
+}
 type DiffOption struct{}
 type RenderOption struct{}
 type StatusOption struct{}
@@ -147,6 +159,8 @@ type RollbackOption struct {
 type ClusterCmd struct{}
 type LoadBalancerCmd struct{}
 type CertificateCmd struct{}
+type ASGCmd struct{}
+type WorkerNodeCmd struct{}
 
 func confirm(msg string) bool {
 	fmt.Fprintf(os.Stderr, "%s [y/N]: ", msg)
