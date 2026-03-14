@@ -24,6 +24,8 @@ type ApplicationDefinition struct {
 	ScaleOutThreshold *int32        `json:"scaleOutThreshold,omitempty"`
 	Image             string        `json:"image"`
 	Cmd               []string      `json:"cmd,omitempty"`
+	RegistryUsername  *string       `json:"registryUsername,omitempty"`
+	RegistryPassword  *string       `json:"registryPassword,omitempty"`
 	ExposedPorts      []ExposedPort `json:"exposedPorts,omitempty"`
 	Env               []EnvVar      `json:"env,omitempty"`
 }

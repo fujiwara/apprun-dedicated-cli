@@ -42,13 +42,13 @@ func (c *CLI) runDeploy(ctx context.Context) error {
 
 	// Create new version
 	params := definitionToCreateParams(c.app)
-	// For existing apps with versions, keep registry password; for first version, remove
-	if params.RegistryPasswordAction == "" {
-		if appDetail.ActiveVersion != nil {
-			params.RegistryPasswordAction = v1.RegistryPasswordActionKeep
-		} else {
-			params.RegistryPasswordAction = v1.RegistryPasswordActionRemove
-		}
+	// Set registry password action based on whether a new password is provided
+	if params.RegistryPassword != nil && *params.RegistryPassword != "" {
+		params.RegistryPasswordAction = v1.RegistryPasswordActionNew
+	} else if appDetail.ActiveVersion != nil {
+		params.RegistryPasswordAction = v1.RegistryPasswordActionKeep
+	} else {
+		params.RegistryPasswordAction = v1.RegistryPasswordActionRemove
 	}
 	verOp := apprun.NewVersionOp(c.client, appDetail.ApplicationID)
 	ver, err := verOp.Create(ctx, params)
