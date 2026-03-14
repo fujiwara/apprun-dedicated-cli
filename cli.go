@@ -141,7 +141,9 @@ type InitOption struct {
 	Application string `help:"Application name" required:""`
 	OutputDir   string `name:"output-dir" short:"o" help:"Output directory for generated files" default:"."`
 }
-type DeployOption struct{}
+type DeployOption struct {
+	Wait bool `help:"Wait for deployment to complete" default:"true" negatable:""`
+}
 type DeleteOption struct {
 	Force bool `help:"Skip confirmation prompt" default:"false"`
 }
@@ -155,6 +157,7 @@ type VersionsOption struct{}
 type RollbackOption struct {
 	Target *int32 `name:"target" help:"Version number to rollback to (default: previous existing version)"`
 	Force  bool   `help:"Skip confirmation prompt" default:"false"`
+	Wait   bool   `help:"Wait for deployment to complete" default:"true" negatable:""`
 }
 type ClusterCmd struct{}
 type LoadBalancerCmd struct{}
