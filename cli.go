@@ -29,6 +29,7 @@ type CLI struct {
 	Status       StatusOption     `cmd:"" help:"Show status of application"`
 	Versions     VersionsOption   `cmd:"" help:"List application versions"`
 	Rollback     RollbackOption   `cmd:"" help:"Rollback to previous version"`
+	Containers   ContainersCmd    `cmd:"" help:"Show container status of application"`
 	Cluster      ClusterCmd       `cmd:"" help:"Show cluster information"`
 	LoadBalancer LoadBalancerCmd  `cmd:"load-balancer" aliases:"lb" help:"Show load balancer information"`
 	Certificate  CertificateCmd   `cmd:"" help:"Show certificate information"`
@@ -89,6 +90,8 @@ func (c *CLI) Run(ctx context.Context) error {
 		err = c.runVersions(ctx)
 	case "rollback":
 		err = c.runRollback(ctx)
+	case "containers":
+		err = c.runContainers(ctx)
 	case "cluster":
 		err = c.runCluster(ctx)
 	case "load-balancer":
@@ -170,6 +173,7 @@ type RollbackOption struct {
 	Force      bool   `help:"Skip confirmation prompt" default:"false"`
 	WaitOption `embed:""`
 }
+type ContainersCmd struct{}
 type ClusterCmd struct{}
 type LoadBalancerCmd struct{}
 type CertificateCmd struct{}

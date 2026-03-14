@@ -69,6 +69,7 @@ Commands:
   diff           Show diff between local definition and deployed version
   versions       List application versions
   rollback       Rollback to a previous version
+  containers     Show container status of application
   cluster        Show cluster information
   load-balancer  Show load balancer information (alias: lb)
   certificate    Show certificate information
@@ -352,6 +353,14 @@ $ apprun-dedicated-cli rollback --app application.jsonnet
 |------|-------------|
 | `--target` | Version number to activate (default: previous version, or latest if deactivated) |
 | `--no-wait` | Skip waiting for deployment to complete (default: `--wait`) |
+
+### containers
+
+Show the current container placement and status for the application as JSON. Each entry includes node ID, container states, and desired container configuration.
+
+```console
+$ apprun-dedicated-cli containers --app application.jsonnet
+```
 
 ### cluster
 
