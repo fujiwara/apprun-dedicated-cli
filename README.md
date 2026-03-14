@@ -4,6 +4,8 @@ A CLI tool for deploying applications to [Sakura Cloud AppRun Dedicated](https:/
 
 Inspired by [ecspresso](https://github.com/kayac/ecspresso) for Amazon ECS, this tool focuses exclusively on application deployment (create/update application versions), while infrastructure (clusters, ASGs, load balancers) is expected to be managed separately (e.g., via Terraform).
 
+For the shared (共有型) AppRun service, see [fujiwara/apprun-cli](https://github.com/fujiwara/apprun-cli).
+
 ## Install
 
 ### Binary releases
