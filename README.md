@@ -257,8 +257,10 @@ Example:
 ```jsonnet
 local env = std.native("env");
 local must_env = std.native("must_env");
+local tfstate = std.native("tfstate");
+
 {
-  image: must_env("APP_IMAGE"),
+  image: tfstate('sakura_container_registry.example.fqdn') + '/app:' + must_env('IMAGE_TAG'),
   env: [
     { key: "LOG_LEVEL", value: env("LOG_LEVEL", "info") },
   ],
