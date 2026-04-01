@@ -5,7 +5,7 @@ go 1.25.5
 require (
 	github.com/aereal/jsondiff v0.4.1
 	github.com/alecthomas/kong v1.14.0
-	github.com/fatih/color v1.18.0
+	github.com/fatih/color v1.19.0
 	github.com/fujiwara/jsonnet-armed v0.1.1
 	github.com/fujiwara/sakura-secrets-cli v0.3.0
 	github.com/fujiwara/sloghandler v0.1.0
