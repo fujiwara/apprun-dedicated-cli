@@ -10,7 +10,7 @@ require (
 	github.com/fujiwara/sakura-secrets-cli v0.3.0
 	github.com/fujiwara/sloghandler v0.1.0
 	github.com/fujiwara/tfstate-lookup v1.10.0
-	github.com/google/go-jsonnet v0.21.0
+	github.com/google/go-jsonnet v0.22.0
 	github.com/google/uuid v1.6.0
 	github.com/sacloud/apprun-dedicated-api-go v0.1.0
 	github.com/sacloud/saclient-go v0.3.2
