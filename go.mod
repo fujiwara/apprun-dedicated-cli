@@ -12,8 +12,8 @@ require (
 	github.com/fujiwara/tfstate-lookup v1.10.0
 	github.com/google/go-jsonnet v0.21.0
 	github.com/google/uuid v1.6.0
-	github.com/sacloud/apprun-dedicated-api-go v0.1.0
-	github.com/sacloud/saclient-go v0.3.2
+	github.com/sacloud/apprun-dedicated-api-go v0.2.0
+	github.com/sacloud/saclient-go v0.3.3
 	golang.org/x/sys v0.42.0
 )
 
