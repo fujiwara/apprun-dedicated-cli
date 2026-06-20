@@ -25,7 +25,7 @@ jobs:
 
       - name: Build & Test
         run: |
-          go test -race ./...
+          go test -tags no_gcs,no_azurerm -race ./...
 
   action:
     name: Test action

@@ -112,7 +112,7 @@ The application definition is written in [Jsonnet](https://jsonnet.org/) format.
 
 ### Definition Fields
 
-Most fields correspond to the [`version.CreateParams`](https://pkg.go.dev/github.com/sacloud/apprun-dedicated-api-go/apis/version#CreateParams) in the AppRun Dedicated API Go SDK.
+Most fields correspond to the [`version.CreateParams`](https://pkg.go.dev/github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/version#CreateParams) in the Sakura Cloud Go SDK.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
