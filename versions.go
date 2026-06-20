@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	apprun "github.com/sacloud/apprun-dedicated-api-go"
-	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
+	apprun "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated"
+	v1 "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/v1"
 )
 
 func (c *CLI) runVersions(ctx context.Context) error {

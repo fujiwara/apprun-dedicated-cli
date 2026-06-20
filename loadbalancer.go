@@ -7,9 +7,9 @@ import (
 	"log/slog"
 	"os"
 
-	apprun "github.com/sacloud/apprun-dedicated-api-go"
-	"github.com/sacloud/apprun-dedicated-api-go/apis/loadbalancer"
-	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
+	apprun "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated"
+	"github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/loadbalancer"
+	v1 "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/v1"
 )
 
 type loadBalancerInfo struct {

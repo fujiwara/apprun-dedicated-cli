@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"os"
 
-	apprun "github.com/sacloud/apprun-dedicated-api-go"
-	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
-	"github.com/sacloud/apprun-dedicated-api-go/apis/workernode"
+	apprun "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated"
+	v1 "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/v1"
+	"github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/workernode"
 )
 
 func (c *CLI) runWorkerNode(ctx context.Context) error {

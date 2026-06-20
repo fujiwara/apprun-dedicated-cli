@@ -12,8 +12,7 @@ require (
 	github.com/fujiwara/tfstate-lookup v1.12.1
 	github.com/google/go-jsonnet v0.22.0
 	github.com/google/uuid v1.6.0
-	github.com/sacloud/apprun-dedicated-api-go v0.2.1
-	github.com/sacloud/saclient-go v0.4.0
+	github.com/sacloud/sacloud-sdk-go v0.0.1-beta.2
 	golang.org/x/sys v0.45.0
 )
 
@@ -103,6 +102,7 @@ require (
 	github.com/sacloud/api-client-go v0.3.5 // indirect
 	github.com/sacloud/go-http v0.1.9 // indirect
 	github.com/sacloud/packages-go v0.1.0 // indirect
+	github.com/sacloud/saclient-go v0.4.0 // indirect
 	github.com/sacloud/secretmanager-api-go v0.4.1 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
