@@ -7,6 +7,9 @@ builds:
       - CGO_ENABLED=0
     main: ./cmd/apprun-dedicated-cli/
     binary: apprun-dedicated-cli
+    tags:
+      - no_gcs
+      - no_azurerm
     goos:
       - linux
       - darwin
