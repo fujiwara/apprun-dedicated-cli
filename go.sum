@@ -249,14 +249,14 @@ github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0t
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/sacloud/api-client-go v0.3.5 h1:0ALibvbC+6MBhN7t61k+RhguhiEQ8+NejqBjq1YpylM=
 github.com/sacloud/api-client-go v0.3.5/go.mod h1:akdcCOl6wszywa0YQ5X8cMnNgWTm+7N4EneODTdiH48=
-github.com/sacloud/apprun-dedicated-api-go v0.2.1 h1:2LAbPnBoSe7z53+8SG0LjdYWSuLaM0mfqw16/WTofBU=
-github.com/sacloud/apprun-dedicated-api-go v0.2.1/go.mod h1:1jpL/BPNC8iVn7mfvzMnvWttZiqL0fTfmUkAmrOrv40=
 github.com/sacloud/go-http v0.1.9 h1:Xa5PY8/pb7XWhwG9nAeXSrYXPbtfBWqawgzxD5co3VE=
 github.com/sacloud/go-http v0.1.9/go.mod h1:DpDG+MSyxYaBwPJ7l3aKLMzwYdTVtC5Bo63HActcgoE=
 github.com/sacloud/packages-go v0.1.0 h1:rixWcvkVUI4kX6UYTFJbQgZIoBoNhN48MivHIu3aYq0=
 github.com/sacloud/packages-go v0.1.0/go.mod h1:ntmPnjF8+mGWNtxgBmO0CrLphUlmRkpy+DztjlECp8M=
 github.com/sacloud/saclient-go v0.4.0 h1:d4CqjKDU0muPVukZ2qGB9Me6ANEcMg73z5tIqXIyGWA=
 github.com/sacloud/saclient-go v0.4.0/go.mod h1:5CqxypkPgUW6qZxBGRdKX3I+mVx/OWbbFrrRm6LBNeE=
+github.com/sacloud/sacloud-sdk-go v0.0.1-beta.2 h1:aYN2S6belr8beyScK3ryPuekxLAxPS3WeCdppts1Wxk=
+github.com/sacloud/sacloud-sdk-go v0.0.1-beta.2/go.mod h1:nEoCmGgGzak+nx6PeQ1zkr5LiRhUWwwCb7kSig11210=
 github.com/sacloud/sakumock/secretmanager v0.0.2 h1:C9mNIcBlmzjG1uDg74AuNOJdZE1bo7UyjPF4b2EwFac=
 github.com/sacloud/sakumock/secretmanager v0.0.2/go.mod h1:w30AV16pLBnOviLYThkFfjs36j/jS4C/4UMUphbasp0=
 github.com/sacloud/secretmanager-api-go v0.4.1 h1:uvQExqhbsdRmp5oTk9BNg9Vu2rzM2OaexFuEOKU9oJQ=

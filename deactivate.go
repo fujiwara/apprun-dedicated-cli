@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	apprun "github.com/sacloud/apprun-dedicated-api-go"
+	apprun "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated"
 )
 
 func (c *CLI) runDeactivate(ctx context.Context) error {

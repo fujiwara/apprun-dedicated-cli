@@ -1,8 +1,8 @@
 package cli
 
 import (
-	v1 "github.com/sacloud/apprun-dedicated-api-go/apis/v1"
-	"github.com/sacloud/apprun-dedicated-api-go/apis/version"
+	v1 "github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/v1"
+	"github.com/sacloud/sacloud-sdk-go/api/apprun-dedicated/apis/version"
 )
 
 // versionDetailToDefinition converts SDK VersionDetail to ApplicationDefinition.
