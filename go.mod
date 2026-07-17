@@ -7,7 +7,7 @@ require (
 	github.com/alecthomas/kong v1.15.0
 	github.com/fatih/color v1.19.0
 	github.com/fujiwara/jsonnet-armed v0.1.1
-	github.com/fujiwara/sakura-secrets-cli v0.3.2
+	github.com/fujiwara/sakura-secrets-cli v0.3.3
 	github.com/fujiwara/sloghandler v0.1.0
 	github.com/fujiwara/tfstate-lookup v1.12.1
 	github.com/google/go-jsonnet v0.22.0
