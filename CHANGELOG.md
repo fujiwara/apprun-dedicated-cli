@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.2](https://github.com/fujiwara/apprun-dedicated-cli/compare/v0.1.1...v0.1.2) - 2026-07-17
+
+- Bump sakura-secrets-cli from 0.3.2 to 0.3.3 by @fujiwara in https://github.com/fujiwara/apprun-dedicated-cli/pull/30
+
 ## [v0.1.1](https://github.com/fujiwara/apprun-dedicated-cli/compare/v0.1.0...v0.1.1) - 2026-06-20
 
 - Add link to apprun-cli (shared) in README by @fujiwara in https://github.com/fujiwara/apprun-dedicated-cli/pull/9
