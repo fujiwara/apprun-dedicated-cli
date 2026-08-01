@@ -13,7 +13,7 @@ require (
 	github.com/google/go-jsonnet v0.22.0
 	github.com/google/uuid v1.6.0
 	github.com/sacloud/sacloud-sdk-go v0.0.1-beta.2
-	golang.org/x/sys v0.46.0
+	golang.org/x/sys v0.47.0
 )
 
 require (
