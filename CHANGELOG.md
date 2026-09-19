@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.1.3](https://github.com/fujiwara/apprun-dedicated-cli/compare/v0.1.2...v0.1.3) - 2026-09-19
+
+- Rename CLI.Run to CLI.Execute to avoid kong's special treatment of Run() by @fujiwara in https://github.com/fujiwara/apprun-dedicated-cli/pull/40
+- Rename CLAUDE.md to AGENTS.md by @fujiwara in https://github.com/fujiwara/apprun-dedicated-cli/pull/43
+
 ## [v0.1.2](https://github.com/fujiwara/apprun-dedicated-cli/compare/v0.1.1...v0.1.2) - 2026-07-17
 
 - Bump sakura-secrets-cli from 0.3.2 to 0.3.3 by @fujiwara in https://github.com/fujiwara/apprun-dedicated-cli/pull/30
